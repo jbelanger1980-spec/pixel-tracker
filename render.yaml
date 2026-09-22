@@ -1,0 +1,19 @@
+# Blueprint Render : déploiement en un clic depuis un dépôt Git.
+# https://dashboard.render.com -> New -> Blueprint -> pointe vers ton dépôt.
+services:
+  - type: web
+    name: pixel-tracker
+    runtime: docker
+    plan: free
+    # Une seule instance : la base SQLite ne supporte pas le multi-instance.
+    numInstances: 1
+    envVars:
+      # À vérifier/ajuster après le premier déploiement : Render génère
+      # https://pixel-tracker.onrender.com (selon le nom du service).
+      - key: BASE_URL
+        value: https://pixel-tracker.onrender.com
+      - key: DASH_TOKEN
+        generateValue: true
+    # Pas de disque persistant sur le plan gratuit : la base SQLite vit sur
+    # le système de fichiers éphémère (défaut ./pixels.db). Elle survit aux
+    # mises en veille/réveils mais serait perdue lors d'un redéploiement.
